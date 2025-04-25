@@ -7,7 +7,7 @@ from numpy import linalg
 from sklearn.decomposition import PCA
 from torch.utils.data import TensorDataset, DataLoader
 import random as rdm
-from Connectivity import *
+
 if torch.cuda.is_available():
     device = 'cuda'
 else:
@@ -29,6 +29,7 @@ class Net(torch.nn.Module):
         # Connectivity
         self.recurrent_layer = nn.Linear(self.n, self.n, bias=True)
         self.recurrent_layer.weight.data.fill_diagonal_(0)
+        self.recurrent_layer.weight.data.normal_(mean=0., std=0).to(device=device)
 
         self.recurrent_layer.bias.data.normal_(mean=0.2, std=0).to(device=device)
         self.recurrent_layer.bias.requires_grad = False
@@ -64,7 +65,7 @@ class Net(torch.nn.Module):
 
     def loss_function(self, x, z, mask, lvar,dim):
         return self.mse_z(x, z, mask) + lvar * self.variance(x, dim) +\
-                self.lambda_std * torch.std(torch.std(x, dim=[0,1])) +\
+                self.lambda_std * torch.std(torch.std(x, dim=[0,1])) + \
                 self.lambda_std * torch.std(torch.mean(x, dim=[0, 1]))
 
 
@@ -96,7 +97,7 @@ class Net(torch.nn.Module):
             # Calulate principal components at the beginning of each epoch
             x = self.forward(u)
             pca = PCA()
-            pca.fit(x.detach().numpy().reshape(-1, x.shape[2]))
+            pca.fit(x.detach().cpu().numpy().reshape(-1, x.shape[2]))
             pcs = torch.tensor(pca.components_[:dim, :]).float().to(device)
             
             for batch_idx, (u_batch, z_batch, mask_batch) in enumerate(my_dataloader):
@@ -105,7 +106,7 @@ class Net(torch.nn.Module):
                 recurrent_noise = self.sigma_rec * torch.empty(u_batch.shape[0], u_batch.shape[1], dim).normal_(mean=0, std=1).to(device=device) @ pcs
                 
                 x_batch = self.forward(u_batch,recurrent_noise,training=True)
-                loss = self.loss_function(x_batch, z_batch,mask_batch, lvar, dim)
+                loss = self.loss_function(x_batch, z_batch, mask_batch, lvar, dim)
                 loss.backward()
                 optimizer.step()
                 self.recurrent_layer.weight.data.fill_diagonal_(0)
