@@ -7,7 +7,7 @@ from numpy import linalg
 from sklearn.decomposition import PCA
 from torch.utils.data import TensorDataset, DataLoader
 import random as rdm
-
+from Connectivity import *
 if torch.cuda.is_available():
     device = 'cuda'
 else:
@@ -28,15 +28,17 @@ class Net(torch.nn.Module):
         
         # Connectivity
         self.recurrent_layer = nn.Linear(self.n, self.n, bias=True)
-        self.recurrent_layer.weight.data.fill_diagonal_(0)
-        self.recurrent_layer.weight.data.normal_(mean=0., std=0).to(device=device)
+        self.recurrent_layer.weight.data.fill_diagonal_(0.2)
+        #self.recurrent_layer.weight.data.normal_(mean=0., std=0.025).to(device=device)
 
         self.recurrent_layer.bias.data.normal_(mean=0.2, std=0).to(device=device)
         self.recurrent_layer.bias.requires_grad = False
 
         self.input_layer = nn.Linear(self.input_size, self.n, bias=False)
-
+        #self.input_layer.weight.data.normal_(mean=0.2, std=0.025).to(device=device)
+        
         self.output_layer = nn.Linear(self.n, self.output_size, bias=False)
+       # self.input_layer.weight.data.normal_(mean=0.2, std=0.025).to(device=device)
    
 
     # Dynamics
@@ -65,8 +67,8 @@ class Net(torch.nn.Module):
 
     def loss_function(self, x, z, mask, lvar,dim):
         return self.mse_z(x, z, mask) + lvar * self.variance(x, dim) +\
-                self.lambda_std * torch.std(torch.std(x, dim=[0,1])) + \
-                self.lambda_std * torch.std(torch.mean(x, dim=[0, 1]))
+                self.lambda_std * torch.std(torch.std(x, dim=[0,1])) / torch.mean(torch.std(x, dim=[0,1])) + \
+                self.lambda_std * torch.std(torch.mean(x, dim=[0, 1])) / torch.mean(torch.mean(x, dim=[0, 1]))
 
 
     def mse_z(self, x, z, mask):
@@ -109,7 +111,7 @@ class Net(torch.nn.Module):
                 loss = self.loss_function(x_batch, z_batch, mask_batch, lvar, dim)
                 loss.backward()
                 optimizer.step()
-                self.recurrent_layer.weight.data.fill_diagonal_(0)
+                self.recurrent_layer.weight.data.fill_diagonal_(0.2)
 
                 epoch += 1
                 if verbose:
