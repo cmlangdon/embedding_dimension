@@ -7,12 +7,12 @@ from numpy import linalg
 from sklearn.decomposition import PCA
 from torch.utils.data import TensorDataset, DataLoader
 import random as rdm
-from Connectivity import *
+#from Connectivity import *
 if torch.cuda.is_available():
     device = 'cuda'
 else:
     device = 'cpu'
-
+print('hello')
 class Net(torch.nn.Module):
     def __init__(self, n, alpha = .2, sigma_rec=0.15,sigma_in=0.2, input_size=6, output_size=2,dale=False,activation = torch.nn.ReLU(),lambda_std=0. ):
         super(Net, self).__init__()
