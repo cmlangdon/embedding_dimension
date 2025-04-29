@@ -24,13 +24,13 @@ from scipy import stats
 # from datajoint_tables import *
 from sklearn.metrics.cluster import adjusted_rand_score
 
-#task_id = int(os.environ['SLURM_ARRAY_TASK_ID'])
-task_id = 1
+task_id = int(os.environ['SLURM_ARRAY_TASK_ID'])
+#task_id = 1
 
 if torch.cuda.is_available():
     device = 'cuda'
 else:
-    device = 'cpu'
+    device = 'mps'
 print(device)
 
 
@@ -60,19 +60,18 @@ from TwoAFCTask import generate_trials
 u, z, mask, conditions = generate_trials(n_trials=25)
 
 lvar = np.concatenate([-10 ** np.linspace(-3, 0, 25), [0], 10 ** np.linspace(-3, 0, 25)])
-lvar = [1]
-dim = [2]
+dim = [2,3,4,5]
 threshold = [.025]
 n_neurons = [100]
 epochs = [1000]
-lr = [.005]
+lr = [.01]
 n_init = 5
 sigma_rec = [0.]
-lambda_std = [0.1]
+lambda_std = [0.2]
 weight_decay = [0.001]
 max_k = 6
 n_runs = 5
-n_repeats = 50
+n_repeats = 25
 param_grid = np.repeat(
     np.array([x for x in itertools.product(n_neurons, epochs, lvar, dim, sigma_rec, weight_decay, threshold,lambda_std,lr)]),
     repeats=n_repeats, axis=0)
@@ -119,7 +118,7 @@ for job in job_intervals[task_id - 1]:
         net.sigma_rec = 0.0
         x = net(u.to(device=device))
         mse_z = net.mse_z(x.to(device), z.to(device), mask.to(device))
-        activity_std = torch.std(torch.std(x, dim=[0, 1])).detach().cpu().numpy()
+        activity_std = torch.std(torch.mean(x, dim=[0, 1])).detach().cpu().numpy() / torch.mean(torch.mean(x, dim=[0, 1])).detach().cpu().numpy()
     
         # Condition averages
         x = x.detach().cpu().numpy()
