@@ -7,12 +7,12 @@ from numpy import linalg
 from sklearn.decomposition import PCA
 from torch.utils.data import TensorDataset, DataLoader
 import random as rdm
-#from Connectivity import *
+from Connectivity import *
 if torch.cuda.is_available():
     device = 'cuda'
 else:
     device = 'cpu'
-print('hello')
+
 class Net(torch.nn.Module):
     def __init__(self, n, alpha = .2, sigma_rec=0.15,sigma_in=0.2, input_size=6, output_size=2,dale=False,activation = torch.nn.ReLU(),lambda_std=0. ):
         super(Net, self).__init__()
@@ -28,7 +28,7 @@ class Net(torch.nn.Module):
         
         # Connectivity
         self.recurrent_layer = nn.Linear(self.n, self.n, bias=True)
-        self.recurrent_layer.weight.data.fill_diagonal_(0.2)
+        self.recurrent_layer.weight.data.fill_diagonal_(0.)
         #self.recurrent_layer.weight.data.normal_(mean=0., std=0.025).to(device=device)
 
         self.recurrent_layer.bias.data.normal_(mean=0.2, std=0).to(device=device)
@@ -111,7 +111,7 @@ class Net(torch.nn.Module):
                 loss = self.loss_function(x_batch, z_batch, mask_batch, lvar, dim)
                 loss.backward()
                 optimizer.step()
-                self.recurrent_layer.weight.data.fill_diagonal_(0.2)
+                #self.recurrent_layer.weight.data.fill_diagonal_(0.)
 
                 epoch += 1
                 if verbose:
