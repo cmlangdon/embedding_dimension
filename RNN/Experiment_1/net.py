@@ -7,7 +7,6 @@ from numpy import linalg
 from sklearn.decomposition import PCA
 from torch.utils.data import TensorDataset, DataLoader
 import random as rdm
-from Connectivity import *
 if torch.cuda.is_available():
     device = 'cuda'
 else:
