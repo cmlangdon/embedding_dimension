@@ -3,11 +3,10 @@
 #SBATCH -o slurm-%j.out
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --array=1-25
+#SBATCH --array=1-1000
 #SBATCH --cpus-per-task=1
 #SBATCH --time=24:00:00
-#SBATCH --gres=gpu:1
-#SBATCH --partition=mig
+
 
 module purge
 module load cudatoolkit/12.0

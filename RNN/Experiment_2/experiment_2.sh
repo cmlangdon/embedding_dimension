@@ -9,7 +9,6 @@
 #SBATCH --time=24:00:00
 #SBATCH --partition=mig
 
-
 module purge
 module load cudatoolkit/12.6
 module load anaconda3/2022.5

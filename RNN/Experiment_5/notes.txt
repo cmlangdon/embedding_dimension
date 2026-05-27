@@ -1,0 +1,19 @@
+Notes
+
+Experiment:
+    dim: 2, 3, 4
+    epochs = 1000
+    repeats = 250
+    max lvar: 1e3
+
+Summary of results:
+    For dim=2, there is nice convergence but low success rate for high lvar.
+    For dim=3, curves start to rise again for large lvar and fail to do the task above lvar=200.
+    For dim=4, curves look like they will converge for higher lvar (e.g. 1e4)
+
+    How does the optimization find solutions in which the task loss is low (~0.04), the dynamics are low-dimensional but
+    there is no clustering?
+
+New test:
+    Adding correlated noise to inputs. My guess is that because the noise was not correlated, it was possible
+    for the optimization to find solutions in which the trajectories were highly correlated and not crossing all hyperplanes.

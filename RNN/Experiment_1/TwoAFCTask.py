@@ -15,7 +15,7 @@ import torch
 from scipy import stats
 import scipy.ndimage
 
-
+print('2afc')
 def generate_input_target_stream( motion_coh, n_t,
                                  stim_on,stim_off, dec_on, dec_off):
     """
@@ -81,12 +81,12 @@ def generate_trials( n_trials,n_t = 75):
     """
 
     #cohs = np.hstack((-10 ** np.linspace(0, -2, n_coh), 10 ** np.linspace(-2, 0, n_coh)))
-    cohs = [-1.    , -0.25  , -0.125 , -0.0625,  0.    ,  0.0625,  0.125 ,
-        0.25  ,  1.]
-    #cohs = np.linspace(-1,1,50)
+    # cohs = [-1.    , -0.25  , -0.125 , -0.0625,  0.    ,  0.0625,  0.125 ,
+    #     0.25  ,  1.]
+    cohs  = np.linspace(-1,1,9)
     stim_on= int(round(n_t * .2))
-    stim_off= int(round(n_t))
-    dec_on= int(round(n_t * .75))
+    stim_off= int(round(n_t * .5))
+    dec_on= int(round(n_t * .5))
     dec_off= int(round(n_t))
 
 
