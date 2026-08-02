@@ -3,7 +3,7 @@
 #SBATCH -o slurm-%j.out
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --array=1-40
+#SBATCH --array=1-120
 #SBATCH --cpus-per-task=1
 #SBATCH --gres=gpu:1
 #SBATCH --time=24:00:00

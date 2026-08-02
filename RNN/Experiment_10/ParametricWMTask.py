@@ -39,15 +39,15 @@ def generate_input_target_stream( theta, n_t,
     return input, target
 
 
-def generate_trials( n_trials, n_t = 75,n_conditions = 50):
+def generate_trials( n_trials, n_t = 75,n_conditions = 50,stim_on = 0,stim_off = 75):
     '''
 
     :param n_trials: Total number of trials
     :param n_t: Number of time steps in single trial
     :return: inputs, targets, mask, conditions
     '''
-    stim_on= int(round(n_t * 0))
-    stim_off= int(round(n_t ))
+    stim_on= int(round(n_t * stim_on))
+    stim_off= int(round(n_t*stim_off ))
     dec_on= int(round(n_t * .75))
     dec_off= int(round(n_t))
 

@@ -98,12 +98,12 @@ class Net(torch.nn.Module):
         self.recurrent_layer = nn.Linear(self.n, self.n, bias=True)
         #self.recurrent_layer.weight.data.fill_diagonal_(0)
 
-        self.recurrent_layer.bias.data.normal_(mean=0.2, std=0).to(device=device)
-        self.recurrent_layer.bias.requires_grad = True
+        self.recurrent_layer.bias.data.normal_(mean=1, std=0).to(device=device)
+        self.recurrent_layer.bias.requires_grad = False
 
         self.input_layer = nn.Linear(self.input_size, self.n, bias=True)
         self.input_layer.bias.data.normal_(mean=self.base_in, std=0.).to(device=device)
-        self.input_layer.bias.requires_grad = True
+        self.input_layer.bias.requires_grad = False
         # self.input_layer.weight.data = torch.where(torch.rand_like(self.input_layer.weight.data)> 0.5, -self.input_layer.weight.data, self.input_layer.weight.data)
 
         self.output_layer = nn.Linear(self.n, self.output_size, bias=True)
